@@ -53,7 +53,7 @@ int x86_pte_init()
 {
         vpd = &page_dir_boot + THREE_GIB;
         pd = &page_dir_boot;
-        addr_t virt_pt = (addr_t)&page_table_boot;
+        addr_t virt_pt = (addr_t) & page_table_boot;
         virt_pt += THREE_GIB;
         memset(vpt, 0, sizeof(vpt));
 #ifdef PT_DBG
@@ -61,11 +61,10 @@ int x86_pte_init()
 #endif
         int i = 768;
         unsigned int inc = 1024 * sizeof(page_table_boot);
-        for (; i < 1024; i++, virt_pt += inc)
-        {
-                vpt[i] = (void*)virt_pt;
+        for (; i < 1024; i++, virt_pt += inc) {
+                vpt[i] = (void*) virt_pt;
         }
-        memset(&pte_cnt, 0, sizeof(pte_cnt));
+        memset((void*) &pte_cnt, 0, sizeof(pte_cnt));
 #ifdef SLAB
         x86_pte_pt_cache = mm_cache_init("PT_cache",
                         1024*sizeof(struct page_table),
@@ -78,14 +77,14 @@ int x86_pte_init()
                         NULL,
                         NULL);
         if (x86_pte_pt_cache == NULL || x86_pte_meta_cache == NULL)
-                panic("Unable to initialise the pte memory caches!");
+        panic("Unable to initialise the pte memory caches!");
 #endif
         return -E_SUCCESS;
 }
 
 void* x86_pte_get_phys(void* virt)
 {
-        addr_t v = (addr_t)virt >> 12;
+        addr_t v = (addr_t) virt >> 12;
         int pte = v & 0x3FF;
         int pde = (v >> 10) & 0x3FF;
 
@@ -98,9 +97,9 @@ void* x86_pte_get_phys(void* virt)
         addr_t ret = pt[pte].pageIdx;
         ret <<= 12;
 
-        ret += (addr_t)virt & 0xFFF;
+        ret += (addr_t) virt & 0xFFF;
 
-        return (void*)ret;
+        return (void*) ret;
 }
 
 int x86_pte_map(void* virt, void* phys, int cpl)
@@ -136,8 +135,7 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                 return -E_SUCCESS;
 
         struct x86_pte_meta* meta = range->arch_data;
-        if (meta == NULL)
-        {
+        if (meta == NULL) {
                 /*
                  *  If the meta data structure doesn't exist, allocate a new one
                  *  and assume everything can be zero'd out.
@@ -148,7 +146,8 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                 meta = kmalloc(sizeof(*meta));
 #endif
                 if (meta == NULL)
-                        panic("Unable to allocate paging meta data for segment");
+                        panic(
+                                        "Unable to allocate paging meta data for segment");
 
                 memset(meta, 0, sizeof(*meta));
                 /* And update the arch data in the range structure */
@@ -156,8 +155,8 @@ int x86_pte_load_range(struct sys_mmu_range* range)
         }
 
         /* Get an idea of the range we have to cover */
-        addr_t from = (addr_t)range->virt;
-        addr_t to = (addr_t)range->virt + range->size;
+        addr_t from = (addr_t) range->virt;
+        addr_t to = (addr_t) range->virt + range->size;
 
         /* Set up an index into the directory */
         idx_t idx = from >> 22;
@@ -173,8 +172,7 @@ int x86_pte_load_range(struct sys_mmu_range* range)
         /* Page table index limit */
         idx_t last_entry = 0x3FF;
 
-        if ((from & (four_meg - 1)) != 0 || (from >> 22) == (to >> 22))
-        {
+        if ((from & (four_meg - 1)) != 0 || (from >> 22) == (to >> 22)) {
                 /*
                  * If this range does not extend into another page table
                  * make sure we don't copy over too many table entries.
@@ -186,8 +184,7 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                  * If the first page table is not used completely, try to map it
                  * into the existing one
                  */
-                if (!vpd[idx].present)
-                {
+                if (!vpd[idx].present) {
                         /*
                          * If in the current setup this page table is not yet
                          * present, map in our own one.
@@ -196,17 +193,13 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                         vpt[idx] = meta->vpt[idx];
                         struct page_table* pt = vpt[idx];
 
-                        for (; i <= last_entry; i++)
-                        {
-                                if (pt[i].unloaded)
-                                {
+                        for (; i <= last_entry; i++) {
+                                if (pt[i].unloaded) {
                                         pt[i].unloaded = 0;
                                         pt[i].present = 1;
                                 }
                         }
-                }
-                else
-                {
+                } else {
                         /*
                          * If this page table is not actually used, just forget
                          * about it.
@@ -219,14 +212,12 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                         struct page_table* mpt = meta->vpt[idx];
 
                         /* And actually map the entries */
-                        for (; i <= last_entry; i++)
-                        {
+                        for (; i <= last_entry; i++) {
                                 if (pt[i].present)
                                         goto mapped;
 
                                 pt[i] = mpt[i];
-                                if (pt[i].unloaded)
-                                {
+                                if (pt[i].unloaded) {
                                         pt[i].present = 1;
                                         pt[i].unloaded = 0;
                                 }
@@ -250,7 +241,7 @@ int x86_pte_load_range(struct sys_mmu_range* range)
                 idx++;
                 cnt++;
         }
-skip1:
+        skip1:
         /*
          * Loop through the page directory entries and make them point to our
          * tables.
@@ -258,8 +249,7 @@ skip1:
          * This assumes we rounded our limit down, so it does should not include
          * the last page table, which could potentially only be partially used.
          */
-        for (; cnt < limit; cnt++, idx++)
-        {
+        for (; cnt < limit; cnt++, idx++) {
                 if (vpd[idx].present)
                         goto mapped;
                 if (!meta->pd[idx].present)
@@ -270,8 +260,7 @@ skip1:
 
                 vpd[idx].present = 1;
         }
-        if ((to & (four_meg - 1)) != 0 && (from >> 22) != (to >> 22))
-        {
+        if ((to & (four_meg - 1)) != 0 && (from >> 22) != (to >> 22)) {
                 /* Set up loop parameters */
                 i = 0;
                 /* Make sure we don't map too many entries */
@@ -286,8 +275,7 @@ skip1:
                  * If this page directory entry is the last one and partially
                  * mapped, but not also the first one, map this partially.
                  */
-                if (!vpd[idx].present)
-                {
+                if (!vpd[idx].present) {
                         /*
                          * Again, if this directory entry is not actively used
                          * in the current setup, just copy over the entry.
@@ -295,10 +283,8 @@ skip1:
                         vpd[idx] = meta->pd[idx];
                         vpt[idx] = meta->vpt[idx];
 
-                        for (; i <= last_entry; i++)
-                        {
-                                if (pt[i].unloaded)
-                                {
+                        for (; i <= last_entry; i++) {
+                                if (pt[i].unloaded) {
                                         pt[i].unloaded = 0;
                                         pt[i].present = 1;
                                 }
@@ -310,15 +296,12 @@ skip1:
                         goto skip2;
 
                 /* And do the mapping */
-                for (; i <= last_entry; i++)
-                {
-                        if (pt[i].present)
-                        {
+                for (; i <= last_entry; i++) {
+                        if (pt[i].present) {
                                 goto mapped;
                         }
                         pt[i] = mpt[i];
-                        if (pt[i].unloaded)
-                        {
+                        if (pt[i].unloaded) {
                                 pt[i].present = 1;
                                 pt[i].unloaded = 0;
                         }
@@ -334,11 +317,9 @@ skip1:
 #endif
         }
 
-skip2:
-        return -E_SUCCESS;
-mapped:
-        printf("PDE: %X\tPTE: %X\n", (int)idx, (int)i);
-        printf("Problem area: %X\n", ((addr_t)idx << 22) | ((addr_t)i << 12));
+        skip2: return -E_SUCCESS;
+        mapped: printf("PDE: %X\tPTE: %X\n", (int) idx, (int) i);
+        printf("Problem area: %X\n", ((addr_t) idx << 22) | ((addr_t) i << 12));
         panic("Attempting to map already mapped area");
         return -E_GENERIC;
 }
@@ -354,8 +335,7 @@ int x86_pte_unload_range(struct sys_mmu_range* range)
 
         /* Make sure the task based page table data has been allocated */
         struct x86_pte_meta* meta = range->arch_data;
-        if (meta == NULL)
-        {
+        if (meta == NULL) {
 #ifdef SLAB
                 meta = mm_cache_alloc(x86_pte_meta_cache, 0);
 #else
@@ -368,8 +348,8 @@ int x86_pte_unload_range(struct sys_mmu_range* range)
         }
 
         /* Set up loop parameters and stuff */
-        addr_t from = (addr_t)range->virt;
-        addr_t to = (addr_t)range->virt + range->size;
+        addr_t from = (addr_t) range->virt;
+        addr_t to = (addr_t) range->virt + range->size;
 
         /* Idx = index into page directory */
         register idx_t idx = from >> 22;
@@ -388,14 +368,12 @@ int x86_pte_unload_range(struct sys_mmu_range* range)
          * For anybody wondering why task switches are expensive ...
          * Here is why!
          */
-        if ((from & (four_meg - 1)) != 0 || (from >> 22) == (to >> 22))
-        {
+        if ((from & (four_meg - 1)) != 0 || (from >> 22) == (to >> 22)) {
                 /*
                  *  If the first page table is only partly used, make sure the
                  * existing entries don't get fubar'ed.
                  */
-                if (vpd[idx].present == 0)
-                {
+                if (vpd[idx].present == 0) {
                         /*
                          * If there are no existing entries, there is nothing to
                          * be fubar'ed. Just copy all of it asap.
@@ -416,10 +394,8 @@ int x86_pte_unload_range(struct sys_mmu_range* range)
                 /* Set up loop parameters */
                 struct page_table* pt = vpt[idx];
 
-                for (; i <= last_entry; i++)
-                {
-                        if (pt[i].present)
-                        {
+                for (; i <= last_entry; i++) {
+                        if (pt[i].present) {
                                 pt[i].unloaded = 1;
                         }
                         pt[i].present = 0;
@@ -434,16 +410,13 @@ int x86_pte_unload_range(struct sys_mmu_range* range)
 
                 /* If the page table was empty, besides our work, disable it */
                 idx_t j = 0;
-                for (; j < 0x400; j++)
-                {
+                for (; j < 0x400; j++) {
                         if (pt[j].present == 1)
                                 goto skip1;
                 }
-                vpd[idx-1].present = 0;
+                vpd[idx - 1].present = 0;
         }
-skip1:
-        for (; cnt < limit; cnt++, idx++)
-        {
+        skip1: for (; cnt < limit; cnt++, idx++) {
                 /*
                  * Disable the page tables we know are filled completely.
                  */
@@ -455,18 +428,16 @@ skip1:
                  * to the entry. It is quicker than flipping only one bit, as
                  * that would require the data to also be read from memory.
                  */
-                *(int*)&vpd[idx] = 0;
+                *(int*) &vpd[idx] = 0;
         }
         /*
          * If the last page table wasn't used completely, make sure we take the
          * table entries out as well and leave the rest
          */
         i = 0;
-        if ((to & (four_meg - 1)) != 0 && (from >> 22) != (to >> 22))
-        {
+        if ((to & (four_meg - 1)) != 0 && (from >> 22) != (to >> 22)) {
                 /* If this entry isn't actually in use, just skip over it */
-                if (vpd[idx].present == 0)
-                {
+                if (vpd[idx].present == 0) {
                         meta->pd[idx].present = 0;
                         goto skip2;
                 }
@@ -482,10 +453,8 @@ skip1:
                  * far.
                  */
                 last_entry = ((to & (four_meg - 1)) >> 12);
-                for (; i <= last_entry; i++)
-                {
-                        if (pt[i].present)
-                        {
+                for (; i <= last_entry; i++) {
+                        if (pt[i].present) {
                                 pt[i].unloaded = 1;
                                 pt[i].present = 0;
                         }
@@ -494,25 +463,23 @@ skip1:
                  * If this range is otherwise not in use, disable it in the page
                  * directory.
                  */
-                for (i = last_entry; i <= 0x400; i++)
-                {
+                for (i = last_entry; i <= 0x400; i++) {
                         if (pt[i].present != 0)
                                 goto skip2;
                 }
-                *(int*)&vpd[idx] = 0;
+                *(int*) &vpd[idx] = 0;
         }
 
-skip2:
+        skip2:
         /* Make sure we invalidate the tlb, we don't want to be using old data*/
         asm volatile ("mov %%cr3, %%eax\n\t"
-                      "mov %%eax, %%cr3\n\t"
-                      ::: "%eax", "memory" );
+                        "mov %%eax, %%cr3\n\t"
+                        ::: "%eax", "memory" );
 
         return -E_SUCCESS;
 }
 
-int
-x86_page_cleanup_range(struct sys_mmu_range* range)
+int x86_page_cleanup_range(struct sys_mmu_range* range)
 {
         if (range == NULL)
                 return -E_NULL_PTR;
@@ -522,8 +489,8 @@ x86_page_cleanup_range(struct sys_mmu_range* range)
                 return -E_SUCCESS;
 
         /* Set up loop parameters and stuff */
-        addr_t from = (addr_t)range->virt;
-        addr_t to = (addr_t)range->virt + range->size;
+        addr_t from = (addr_t) range->virt;
+        addr_t to = (addr_t) range->virt + range->size;
 
         /* Idx = index into page directory */
         register idx_t idx = from >> 22;
@@ -538,12 +505,10 @@ x86_page_cleanup_range(struct sys_mmu_range* range)
         /* last_entry indicates the last pt entry to copy */
         idx_t last_entry = 0x400;
 
-        for (; cnt <= limit; cnt++, idx++)
-        {
+        for (; cnt <= limit; cnt++, idx++) {
                 if (cnt == limit)
                         last_entry = (to & (four_meg - 1) >> 12);
-                for (; i < last_entry && meta->pd[idx].present; i++)
-                {
+                for (; i < last_entry && meta->pd[idx].present; i++) {
                         struct page_table* pt = meta->vpt[idx];
                         if (!pt[i].present && !pt[i].unloaded)
                                 continue;
@@ -551,12 +516,11 @@ x86_page_cleanup_range(struct sys_mmu_range* range)
                         addr_t phys = pt[i].pageIdx;
                         phys <<= 12;
 
-                        page_free((void*)phys);
+                        page_free((void*) phys);
                 }
                 i = 0;
 
-                if (meta->pd[idx].present)
-                {
+                if (meta->pd[idx].present) {
                         // Unload page table ...
                         meta->pd[idx].present = 0;
 #ifdef SLAB
@@ -566,7 +530,6 @@ x86_page_cleanup_range(struct sys_mmu_range* range)
 #endif
                 }
         }
-
 
 #ifdef SLAB
         mm_cache_free(x86_pte_meta_cache, meta);

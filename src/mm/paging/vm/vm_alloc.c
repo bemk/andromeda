@@ -119,7 +119,8 @@ static int detect_loop(struct vm_range_descriptor* head, char* list_name)
  * \return A standard error code
  */
 static int vm_range_mark_allocated(segment, range)
-        struct vm_segment* segment;struct vm_range_descriptor* range;
+struct vm_segment* segment;
+struct vm_range_descriptor* range;
 {
         if (segment == NULL || range == NULL) {
                 return -E_NULL_PTR;
@@ -152,10 +153,11 @@ static int vm_range_mark_allocated(segment, range)
 }
 
 static int vm_range_mark_mapped(segment, range)
-        struct vm_segment* segment;struct vm_range_descriptor* range;
+struct vm_segment* segment;
+struct vm_range_descriptor* range;
 {
         if (range == NULL || segment == NULL)
-                return -E_NULL_PTR;
+        return -E_NULL_PTR;
 
         /*
          * We're assuming that the range is previously allocated. Let's take it
@@ -234,10 +236,11 @@ static int vm_range_mark_unmapped(struct vm_segment* segment,
 }
 
 static int vm_range_mark_free(segment, range)
-        struct vm_segment* segment;struct vm_range_descriptor* range;
+struct vm_segment* segment;
+struct vm_range_descriptor* range;
 {
         if (segment == NULL || range == NULL)
-                return -E_NULL_PTR;
+        return -E_NULL_PTR;
 
         /* Dislodge the range and restore the order of the list */
         if (range->prev == NULL) {
@@ -266,7 +269,7 @@ static int vm_range_mark_free(segment, range)
 }
 
 static inline int vm_range_remove_node(range)
-        struct vm_range_descriptor* range;
+struct vm_range_descriptor* range;
 {
         if (range == NULL) {
                 return -E_NULL_PTR;
@@ -311,7 +314,8 @@ static inline int vm_range_remove_node(range)
 }
 
 static int vm_segment_compress_ranges(segment, range)
-        struct vm_segment* segment;struct vm_range_descriptor* range;
+struct vm_segment* segment;
+struct vm_range_descriptor* range;
 {
         if (segment == NULL || range == NULL) {
                 return -E_NULL_PTR;
@@ -326,7 +330,6 @@ static int vm_segment_compress_ranges(segment, range)
         struct vm_range_descriptor* x = segment->free;
         struct vm_range_descriptor* next = NULL;
 
-        int i = 0;
         while (x != NULL ) {
                 next = x->next;
                 if (x->base + x->size == range->base) {
@@ -452,7 +455,7 @@ static int vm_range_split(struct vm_range_descriptor* src, size_t size)
 void* vm_segment_alloc(struct vm_segment *s, size_t size)
 {
         if (s == NULL || size == 0 || s->free == NULL) {
-                return NULL ;
+                return NULL;
         }
 
         /*
@@ -469,7 +472,7 @@ void* vm_segment_alloc(struct vm_segment *s, size_t size)
         /* There's a mutex here, don't forget to unlock */
         int locked = mutex_test(&s->lock);
         if (locked == mutex_locked) {
-                return NULL ;
+                return NULL;
         }
 
         /*
@@ -479,7 +482,7 @@ void* vm_segment_alloc(struct vm_segment *s, size_t size)
         struct vm_range_descriptor* x = s->free;
         struct vm_range_descriptor* tmp = NULL;
         void* ret = NULL;
-        for (; x != NULL ; x = x->next) {
+        for (; x != NULL; x = x->next) {
                 /*
                  * If x matches the size requirement AND if x is a better fit
                  * than what we found before, mark this as our new best fit.
@@ -524,11 +527,11 @@ void* vm_segment_alloc(struct vm_segment *s, size_t size)
 void* vm_map(void* virt, void* phys, struct vm_segment* s)
 {
         if (virt == NULL || phys == NULL || s == NULL)
-                return NULL ;
+                return NULL;
 
         mutex_lock(&s->lock);
         struct vm_range_descriptor* r = s->allocated;
-        for (; r != NULL ; r = r->next) {
+        for (; r != NULL; r = r->next) {
                 if (r->base == virt)
                         break;
         }
@@ -542,8 +545,7 @@ void* vm_map(void* virt, void* phys, struct vm_segment* s)
         addr_t v = (addr_t) virt;
         addr_t p = (addr_t) phys;
         size_t i = 0;
-        for (; i < cnt; i += PAGE_ALLOC_FACTOR)
-        {
+        for (; i < cnt; i += PAGE_ALLOC_FACTOR) {
                 if (page_claim((void*) (p + i)) == NULL) {
                         goto gofixit;
                 }
@@ -552,15 +554,14 @@ void* vm_map(void* virt, void* phys, struct vm_segment* s)
 
         err: mutex_unlock(&s->lock);
 
-        return (r == NULL ) ? NULL : r->base;
+        return (r == NULL) ? NULL : r->base;
 
-        gofixit: for (; (int) i >= 0; i -= PAGE_ALLOC_FACTOR)
-        {
+        gofixit: for (; (int) i >= 0; i -= PAGE_ALLOC_FACTOR) {
                 page_unmap(0, (void*) (v + i));
                 page_free((void*) p + i);
         }
         mutex_unlock(&s->lock);
-        return NULL ;
+        return NULL;
 }
 
 /**
@@ -576,7 +577,7 @@ int vm_unmap(void* virt, struct vm_segment* s)
 
         mutex_lock(&s->lock);
         struct vm_range_descriptor* r = s->mapped;
-        for (; r != NULL ; r = r->next) {
+        for (; r != NULL; r = r->next) {
                 if (r->base == virt)
                         break;
         }
@@ -588,8 +589,7 @@ int vm_unmap(void* virt, struct vm_segment* s)
                 goto err;
 
         size_t i = 0;
-        for (; i < r->size; i += PAGE_ALLOC_FACTOR)
-        {
+        for (; i < r->size; i += PAGE_ALLOC_FACTOR) {
                 page_unmap(0, (void*) (virt + i));
                 page_free(p + i);
         }
@@ -597,7 +597,7 @@ int vm_unmap(void* virt, struct vm_segment* s)
         vm_range_mark_unmapped(s, r);
         err: mutex_unlock(&s->lock);
 
-        return (r == NULL ) ? -E_NULL_PTR : -E_SUCCESS;
+        return (r == NULL) ? -E_NULL_PTR : -E_SUCCESS;
 }
 
 /**
@@ -613,12 +613,12 @@ struct vm_segment*
 vm_find_segment(char* name)
 {
         if (name == NULL) {
-                return NULL ;
+                return NULL;
         }
 
         size_t len = strlen(name);
         struct vm_segment* i = vm_core.segments;
-        while (i != NULL ) {
+        while (i != NULL) {
                 if (i->name == NULL) {
                         goto next;
                 }
@@ -634,7 +634,7 @@ vm_find_segment(char* name)
         if (vm_get_initialised() >= 2) {
                 warning("Segment not found!\n");
         }
-        return NULL ;
+        return NULL;
 }
 
 /**
@@ -685,7 +685,7 @@ void*
 vm_get_kernel_heap_pages(size_t size)
 {
         if (size == 0) {
-                return NULL ;
+                return NULL;
         }
 
         if (size % PAGE_ALLOC_FACTOR != 0) {
@@ -697,7 +697,7 @@ vm_get_kernel_heap_pages(size_t size)
                 if (vm_get_initialised() >= 2) {
                         warning("Heap not found!\n");
                 }
-                return NULL ;
+                return NULL;
         }
 
         return vm_segment_alloc(heap, size);
@@ -713,16 +713,16 @@ void*
 vm_map_heap(void* phys, size_t size)
 {
         if (phys == NULL || size == 0)
-                return NULL ;
+                return NULL;
 
         struct vm_segment* heap = vm_find_segment(".heap");
         if (heap == NULL)
-                return NULL ;
+                return NULL;
 
         void* virt = vm_segment_alloc(heap, size);
         if (vm_map(virt, phys, heap) != virt) {
                 vm_segment_free(heap, virt);
-                return NULL ;
+                return NULL;
         }
 
         return virt;

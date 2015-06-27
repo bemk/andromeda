@@ -27,19 +27,17 @@
 
 extern int initial_slab_space;
 
-char* heap_base = (char*)&initial_slab_space;
+char* heap_base = (char*) &initial_slab_space;
 
-int
-complement_heap(void* base, size_t size)
+int complement_heap(void* base, size_t size)
 {
         heap_add_blocks(base, size);
         return 0;
 }
 
-int
-init_heap()
+int init_heap()
 {
-        heap_add_blocks(heap_base, (size_t)&higherhalf - (size_t)heap_base);
+        heap_add_blocks(heap_base, (size_t) & higherhalf - (size_t) heap_base);
         return -E_SUCCESS;
 }
 #endif
@@ -52,18 +50,15 @@ void memset(void *dest, int sval, size_t count)
 #ifndef X86 //64 bit int is only faster at X86, X64 prefers 2 time 32 int
         unsigned long long val = (unsigned long long) sval;
         char i = 8;
-        for (; i < 64; i += 8)
-        {
+        for (; i < 64; i += 8) {
                 val |= (sval << i);
         }
-        while (count >= 8)
-        {
+        while (count >= 8) {
                 *(unsigned long long*) dest = (unsigned long long) val;
                 dest += 8;
                 count -= 8;
         }
-        if (count >= 4)
-        {
+        if (count >= 4) {
                 *(unsigned int*) dest = (unsigned int) val;
                 dest += 4;
                 count -= 4;
@@ -99,21 +94,19 @@ void memset(void *dest, int sval, size_t count)
 //         }
 // }
 
-static void memcpyBack(void *dest, void *src, size_t count)
+static void memcpyBack(const void *dest, const void *src, size_t count)
 {
         dest += count;
         src += count;
 #ifndef X86
 //64 bit int is only faster at 64-bit PC's, 32 bits prefers 2 time 32 int
-        while (count >= 8)
-        {
+        while (count >= 8) {
                 *(unsigned long long*) dest = *(unsigned long long*) src;
                 dest -= 8;
                 src -= 8;
                 count -= 8;
         }
-        if (count >= 4)
-        {
+        if (count >= 4) {
                 *(unsigned long long*) dest = *(unsigned long long*) src;
                 dest -= 4;
                 src -= 4;
@@ -145,15 +138,13 @@ void memmove(void *dest, const void *src, size_t count)
                 memcpyBack(dest, src, count);
 #ifndef X86
         //64 bit int is only faster at 64-bit PC's, 32 bits prefers 2 time 32 int
-        while (count >= 8)
-        {
+        while (count >= 8) {
                 *(unsigned long long*) dest = *(unsigned long long*) src;
                 dest += 8;
                 src += 8;
                 count -= 8;
         }
-        if (count >= 4)
-        {
+        if (count >= 4) {
                 *(unsigned long long*) dest = *(unsigned long long*) src;
                 dest += 4;
                 src += 4;
@@ -179,7 +170,8 @@ void memmove(void *dest, const void *src, size_t count)
         return;
 }
 
-void memcpy (void* s1, const void* s2, const size_t len) {
+void memcpy(void* s1, const void* s2, const size_t len)
+{
         size_t i = 0;
         char* a = s1;
         const char* b = s2;
