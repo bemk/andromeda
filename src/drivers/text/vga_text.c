@@ -31,6 +31,8 @@ static atomic_t vga_text_count;
 static struct device* vga_dev = NULL;
 static int32_t vga_text_id = 0;
 
+static int vga_driver_enabled = 0;
+
 struct vga_ctl_data {
         int cursor;
         int16_t colour;
@@ -180,6 +182,8 @@ int vga_text_init(struct device* parent)
         vga_text_id = this->dev_id;
 
         this->open = vga_text_open;
+
+        vga_driver_enabled = -1;
 
         return -E_SUCCESS;
 }

@@ -31,12 +31,11 @@ extern "C" {
 #define VGA_HEIGHT 25
 #define OL_WHITE_TXT 0x07
 
-struct curPos
-{
-	uint32_t x;
-	uint32_t y;
-//        uint16_t *vidmem;
-	int tabwidth;
+struct curPos {
+        uint32_t x;
+        uint32_t y;
+        int tabwidth;
+        mutex_t lock;
 };
 
 #ifdef __cplusplus

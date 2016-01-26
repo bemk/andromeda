@@ -41,8 +41,9 @@ int sys_setup_alloc()
 #ifdef SLAB
         slab_alloc_init();
         core.mm = kmem_alloc(sizeof(*core.mm), 0);
-        if (!hasmm())
+        if (!hasmm()) {
                 panic("The slab allocator was not initialised!");
+        }
         memset(core.mm, 0, sizeof(*core.mm));
         slab_sys_register();
 #elif defined SLOB
@@ -64,8 +65,9 @@ int sys_setup_paging(multiboot_memory_map_t* map, unsigned int length)
 int sys_setup_paging()
 #endif
 {
-        if (!hasmm())
+        if (!hasmm()) {
                 panic("Memory allocation not initialised!");
+        }
 
 #ifdef X86
         x86_pte_init();

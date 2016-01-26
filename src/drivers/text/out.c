@@ -22,10 +22,13 @@
 #include "include/out.h"
 
 int reloc(int loc_x, int loc_y);
-void printDecimalNum(double index, unsigned int base);
-void printNum(int index, unsigned int base, boolean sInt, boolean capital);
+static void printDecimalNum(double index, unsigned int base);
+static void printnum(int index, unsigned int base, boolean sInt,
+                boolean capital);
 struct curPos cursor;
 const uint8_t col = OL_WHITE_TXT;
+
+static void scroll(unsigned char);
 
 void textInit()
 {
@@ -33,28 +36,36 @@ void textInit()
         cursor.x = 0;
         cursor.y = 0;
         cursor.tabwidth = 8;
+        cursor.lock = mutex_unlocked;
 }
 
-void scroll(unsigned char lines)
+static void scroll(unsigned char lines)
 {
         int x, y;
         unsigned short *keybuf = (unsigned short *) KEYBUF;
+        /* Move the lines up by the requested amount */
         for (y = 0; y < VGA_HEIGHT - lines; y++) {
                 for (x = 0; x < VGA_WIDTH; x++) {
                         keybuf[x + y * VGA_WIDTH] = keybuf[x
                                         + (y + lines) * VGA_WIDTH];
                 }
         }
+
+        /* clean up the lines that don't get overwritten */
         for (; y < VGA_HEIGHT; y++) {
                 for (x = 0; x < VGA_WIDTH; x++) {
                         keybuf[x + y * VGA_WIDTH] = ((col << 8) | ' ');
                 }
         }
+
+        /* Reset the cursor if scroll is out of bounds */
         if (lines >= VGA_HEIGHT) {
                 cursor.x = 0;
                 cursor.y = 0;
                 return;
         }
+
+        /* Move the cursor back to the requested position */
         cursor.y -= lines;
 }
 
@@ -96,21 +107,21 @@ void vprintf(char* fmt, va_list list)
                                 break;
                         case 'i':
                                 /*putc('\n'); putc('d'); putc(':'); putc(' '); putc('\t');
-                                printNum((int)list, 16, FALSE, TRUE);
-                                putc('\n'); */
-                                printNum(va_arg(list, unsigned int), 10, TRUE,
+                                 printNum((int)list, 16, FALSE, TRUE);
+                                 putc('\n'); */
+                                printnum(va_arg(list, unsigned int), 10, TRUE,
                                 FALSE);
                                 break;
                         case 'u':
-                                printNum(va_arg(list, unsigned int), 10, FALSE,
+                                printnum(va_arg(list, unsigned int), 10, FALSE,
                                 FALSE);
                                 break;
                         case 'x':
-                                printNum(va_arg(list, unsigned int), 16, FALSE,
+                                printnum(va_arg(list, unsigned int), 16, FALSE,
                                 FALSE);
                                 break;
                         case 'X':
-                                printNum(va_arg(list, unsigned int), 16, FALSE,
+                                printnum(va_arg(list, unsigned int), 16, FALSE,
                                 TRUE);
                                 break;
                         case 'c':
@@ -129,12 +140,14 @@ void vprintf(char* fmt, va_list list)
         }
 }
 
-char hex[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b',
-                'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-                'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-char HEX[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B',
-                'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-                'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+static char hex[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+                        'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+                        'x', 'y', 'z' };
+static char HEX[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
+                        'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                        'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+                        'X', 'Y', 'Z' };
 
 int atoi(char* str)
 {
@@ -144,8 +157,8 @@ int atoi(char* str)
         // (idx < 0x20000000) = overload prevention
         {
                 if (str[i] >= 0x30 && str[i] <= 0x39) {
-                        if (0xffffffff - (idx * 10)
-                                        > (unsigned int) (str[i] - 0x30))
+                        if (0xffffffff - (idx * 10) > (unsigned int) (str[i]
+                                        - 0x30))
                                 //overload prevention
                                 idx = idx * 10 + (str[i] - 0x30);
                         else
@@ -158,14 +171,14 @@ int atoi(char* str)
         return idx;
 }
 
-int formatInt(void* buffer, int num, unsigned int base, boolean sInt,
+static int formatInt(void* buffer, int num, unsigned int base, boolean sInt,
                 boolean capital)
 {
         if (base > 36 || base < 2)
                 return 0;
         int count = 0;
         if ((num < 0) && sInt) //if number is negative print '-' and print absolue value of number (witch is -num)
-                        {
+        {
                 *((char*) buffer++) = '-';
                 count++;
                 num = -num;
@@ -196,8 +209,8 @@ char* itoa(unsigned int index, char* buffer, unsigned int base)
         return buffer;
 }
 
-int formatDouble(void* buffer, double num, unsigned int base, boolean capital,
-                boolean scientific)
+static int formatDouble(void* buffer, double num, unsigned int base,
+                boolean capital, boolean scientific)
 {
         if (base > 36 || base < 2)
                 return 0;
@@ -209,7 +222,7 @@ int formatDouble(void* buffer, double num, unsigned int base, boolean capital,
         if (scientific) {
                 precision = count - 1;
                 if (precision != 0) // if we should print scientific AND we have more than 1 digit before dot.
-                                {
+                {
                         memcpy((char*) buffer + 2, (char*) buffer + 1, count); // all digits after first digit are moved 1 place to left. (e.g. 12345 becomes 122345)
                         *((char*) (buffer + 1)) = '.'; // replace seccond digit with a dot (e.g. 122345 becomes 1.2345)
                         count++;
@@ -218,7 +231,7 @@ int formatDouble(void* buffer, double num, unsigned int base, boolean capital,
         buffer += count;
         double decimals = num - (double) ((int) num); // get all decimals of the number.
         if (decimals == 0) // check for xx.0
-                        {
+        {
                 if (scientific) {
                         *((char*) buffer++) = (capital) ? 'E' : 'e'; //print exx or Exx
                         if (precision >= 0)
@@ -237,7 +250,8 @@ int formatDouble(void* buffer, double num, unsigned int base, boolean capital,
                         {
                 decimals *= 10; // move current decimal befor to left side of the dot.
                 *((char*) buffer++) =
-                                (capital) ? HEX[(int) decimals] : hex[(int) decimals]; //print decimal.
+                                (capital) ? HEX[(int) decimals] :
+                                            hex[(int) decimals]; //print decimal.
                 decimals -= (double) ((int) decimals); //decimal is printed, remove it!
         }
 
@@ -251,14 +265,15 @@ int formatDouble(void* buffer, double num, unsigned int base, boolean capital,
         return count + 1;
 }
 
-char* dtoa(double index, char* buffer, unsigned int base)
+static char* dtoa(double index, char* buffer, unsigned int base)
 {
         int len = formatDouble(buffer, index, base, FALSE, FALSE);
         buffer[len] = '\0';
         return buffer;
 }
 
-void printNum(int index, unsigned int base, boolean sInt, boolean capital)
+static void printnum(int index, unsigned int base, boolean sInt,
+                boolean capital)
 {
         char buf[32];
         memset(buf, '\0', 32);
@@ -275,8 +290,8 @@ void printNum(int index, unsigned int base, boolean sInt, boolean capital)
         }
         unsigned int uIndex = (unsigned int) index;
         for (; uIndex != 0; i++) {
-                buf[31 - i] = (capital) ?
-                                HEX[uIndex % base] : hex[uIndex % base];
+                buf[31 - i] = (capital) ? HEX[uIndex % base] :
+                                          hex[uIndex % base];
                 uIndex /= base;
         }
         for (i--; i >= 0; i--) {
@@ -284,7 +299,7 @@ void printNum(int index, unsigned int base, boolean sInt, boolean capital)
         }
 }
 
-void printDecimalNum(double index, unsigned int base)
+static void printDecimalNum(double index, unsigned int base)
 {
         char buf[64];
         memset(buf, '\0', 64);
@@ -297,6 +312,7 @@ void printDecimalNum(double index, unsigned int base)
 
 void putc(uint8_t c)
 {
+        mutex_lock(&cursor.lock);
         uint16_t *vidmem = (uint16_t*) KEYBUF;
         uint32_t i = (cursor.y * VGA_WIDTH) + cursor.x;
         switch (c) {
@@ -339,6 +355,7 @@ void putc(uint8_t c)
                 scroll(cursor.y % VGA_HEIGHT + 1);
         }
         reloc(cursor.x, cursor.y);
+        mutex_unlock(&cursor.lock);
 }
 
 int reloc(int loc_x, int loc_y)
@@ -353,36 +370,3 @@ int reloc(int loc_x, int loc_y)
         outb(0x3D5, location);
         return 0;
 }
-
-#ifdef MSG_DBG
-void debug (char* fmt, ...)
-{
-        printf("[ DEBUG ] ");
-        va_list list;
-        va_start (list, fmt);
-        vprintf(fmt, list);
-
-        va_end(list);
-}
-#else
-void debug(char* fmt __attribute__((unused)), ...)
-{
-}
-#endif
-
-#ifdef WARN
-void warning (char* fmt, ...)
-{
-        printf("[ WARNING ] ");
-        va_list list;
-        va_start (list, fmt);
-
-        vprintf(fmt, list);
-
-        va_end(list);
-}
-#else
-void warning (char* fmt __attribute__((unused)), ...)
-{
-}
-#endif

@@ -22,8 +22,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-extern char HEX[];
-extern char hex[];
+static char hex[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+                        'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
+                        'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+                        'x', 'y', 'z' };
+static char HEX[36] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
+                        'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                        'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+                        'X', 'Y', 'Z' };
 
 int fputc(struct vfile* stream, int chr)
 {
@@ -64,17 +70,21 @@ int sputs(char* dest, char* src)
  * \return The number of chars printed.
  */
 int sprintnum(str, min_size, num, base, capital, sign, padding)
-        char* str;size_t min_size;int num;int base;
-        bool capital;
-        bool sign;char padding;
+char* str;
+size_t min_size;
+int num;
+int base;
+bool capital;
+bool sign;
+char padding;
 {
         if (base > 36 || base < 2)
-                return -E_INVALID_ARG;
+        return -E_INVALID_ARG;
         /* If num == 0, the result is always the same, so optimize that out */
         if (num == 0) {
                 size_t i = 0;
                 for (; i < min_size - 1; i++)
-                        *(str++) = padding;
+                *(str++) = padding;
                 *(str++) = '0';
                 return min_size;
         }
@@ -82,7 +92,7 @@ int sprintnum(str, min_size, num, base, capital, sign, padding)
         uint32_t unum = (uint32_t) num;
         /* If signedness is allowed, check for signedness */
         if (num < 0 && sign)
-                unum = -num;
+        unum = -num;
 
         char tmp_str[32];
         memset(tmp_str, 0, sizeof(tmp_str));
@@ -93,7 +103,7 @@ int sprintnum(str, min_size, num, base, capital, sign, padding)
          */
         for (; unum != 0; idx++) {
                 tmp_str[sizeof(tmp_str) - idx] =
-                                (capital) ? HEX[unum % base] : hex[unum % base];
+                (capital) ? HEX[unum % base] : hex[unum % base];
                 unum /= base;
         }
         /* If signed and negative, append the - sign */
@@ -109,7 +119,7 @@ int sprintnum(str, min_size, num, base, capital, sign, padding)
         if (idx < min_size) {
                 size_t i = 0;
                 for (; i < min_size - idx; i++)
-                        *(str++) = padding;
+                *(str++) = padding;
                 ret = min_size;
         }
         idx--;
@@ -118,7 +128,7 @@ int sprintnum(str, min_size, num, base, capital, sign, padding)
          * The reversal to get the correct order again.
          */
         for (; (int) idx >= 0; idx--)
-                *(str++) = tmp_str[sizeof(tmp_str) - idx];
+        *(str++) = tmp_str[sizeof(tmp_str) - idx];
         return ret;
 }
 /**
@@ -139,9 +149,13 @@ int sprintnum(str, min_size, num, base, capital, sign, padding)
  * \return The number of chars printed.
  */
 int fprintnum(stream, min_size, num, base, capital, sign, padding)
-        struct vfile* stream;size_t min_size;int num;int base;
-        bool capital;
-        bool sign;char padding;
+struct vfile* stream;
+size_t min_size;
+int num;
+int base;
+bool capital;
+bool sign;
+char padding;
 {
         int ret;
         int maxlen = 2;
@@ -215,8 +229,9 @@ int vfprintf(struct vfile* stream, char* fmt, va_list list)
                         int post = 0;
                         bool dotted = false;
                         for (;
-                                        (*(fmt + 1) >= '0' && *(fmt + 1) <= '9')
-                                                        || *(fmt + 1) == '.';
+                                        (*(fmt + 1) >= '0' && *(fmt + 1) <= '9') || *(fmt
+                                                        + 1)
+                                                                                    == '.';
                                         fmt++) {
                                 if (*(fmt + 1) == '.') {
                                         dotted = true;
@@ -244,9 +259,8 @@ int vfprintf(struct vfile* stream, char* fmt, va_list list)
                          * last % and this one.
                          */
                         num += stream->write(stream, lastWritePosition,
-                                            (unsigned long) fmt
-                                            - (unsigned long) lastWritePosition
-                                            - 1);
+                                        (unsigned long) fmt - (unsigned long) lastWritePosition
+                                        - 1);
                         /* Now finally choose the type of format. */
                         switch (*(++fmt)) {
                         case 'x': /* Print lower case hex numbers */
@@ -303,8 +317,7 @@ int vfprintf(struct vfile* stream, char* fmt, va_list list)
         }
 
         num += stream->write(stream, lastWritePosition,
-                        (unsigned long) fmt
-                                        - (unsigned long) lastWritePosition);
+                        (unsigned long) fmt - (unsigned long) lastWritePosition);
 
         stream->sync(stream);
         return num;
@@ -362,8 +375,9 @@ int vsprintf(char* str, char* fmt, va_list list)
                         int post = 0;
                         bool dotted = false;
                         for (;
-                                        (*(fmt + 1) >= '0' && *(fmt + 1) <= '9')
-                                                        || *(fmt + 1) == '.';
+                                        (*(fmt + 1) >= '0' && *(fmt + 1) <= '9') || *(fmt
+                                                        + 1)
+                                                                                    == '.';
                                         fmt++) {
                                 if (*(fmt + 1) == '.') {
                                         dotted = true;
@@ -442,7 +456,47 @@ int vsprintf(char* str, char* fmt, va_list list)
         return num;
 }
 
+#ifdef MSG_DBG
+void debug(char* fmt, ...)
+{
+        va_list list;
+        va_start(list, fmt);
+
+        printf("[ DEBUG ] ");
+        vprintf(fmt, list);
+
+        va_end(list);
+}
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+void debug(char* fmt, ...)
+{
+}
+#pragma GCC diagnostic pop
+#endif
+
+#ifdef WARN
+void warning(char* fmt, ...)
+{
+        va_list list;
+        va_start(list, fmt);
+
+        printf("[ WARNING ] ");
+        vprintf(fmt, list);
+
+        va_end(list);
+}
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+void warning(char* fmt, ...)
+{
+}
+#pragma GCC diagnostic pop
+#endif
+
 /** @}
- * \file 
+ * \file
  */
 

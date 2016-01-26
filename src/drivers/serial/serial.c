@@ -561,7 +561,6 @@ int drv_serial_kickstart(struct device* parent)
                         printf("Found com: %X\n", i);
                         ret |= dev_serial_init(parent, com_port[i],
                                         com_names[i]);
-
                 }
 
         }

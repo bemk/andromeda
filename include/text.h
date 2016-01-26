@@ -29,13 +29,11 @@ void println(char*);
 void vprintf(char* fmt, va_list list);
 void printf(char*, ...);
 void putc(uint8_t c);
-#define printnum(a,b,c,d) printNum(a,b,c,d)
-void scroll(unsigned char);
 void textInit();
 int atoi(char* str);
 
 void debug(char* fmt, ...);
-void warning (char* fmt, ...);
+void warning(char* fmt, ...);
 
 #ifdef __cplusplus
 }

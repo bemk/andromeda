@@ -29,7 +29,7 @@
 static int drv_root_suspend(struct device* root)
 {
         struct device* carriage = root->children;
-        while (carriage != NULL ) {
+        while (carriage != NULL) {
                 if (carriage->driver == NULL)
                         continue;
                 if (carriage->driver->suspend != NULL)
@@ -43,7 +43,7 @@ static int drv_root_suspend(struct device* root)
 static int drv_root_resume(struct device* root)
 {
         struct device* carriage = root->children;
-        while (carriage != NULL ) {
+        while (carriage != NULL) {
                 if (carriage->driver == NULL)
                         continue;
                 if (carriage->driver->resume != NULL)
@@ -58,7 +58,7 @@ static struct device*
 drv_root_detect(struct device* this)
 {
         if (this == NULL)
-                return NULL ;
+        return NULL;
         return this->children;
 }
 
@@ -67,8 +67,9 @@ int init_buses(struct device* root)
         if (root == NULL)
                 return -E_NULL_PTR;
 
-        struct device* virtual = kmalloc(sizeof(struct device));
-        if (virtual == NULL){
+        struct device
+        * virtual = kmalloc(sizeof(struct device));
+        if (virtual == NULL) {
                 return -E_NOMEM;
         }
         struct device* legacy = kmalloc(sizeof(struct device));

@@ -220,7 +220,7 @@ void kb_handle(uint8_t c)
 				break;
 
 			case 0x50:
-				scroll(1);
+				putc('\n');
 				break;
 			default:
                                 shiftkey ? putc(keycodes[c].capvalue) :

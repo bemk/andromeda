@@ -189,7 +189,7 @@ int init(unsigned long magic, multiboot_info_t* hdr)
         setGDT();
 
         memset(&bda, 0, sizeof(bda));
-        memcpy((void*)0x400, &bda, sizeof(bda));
+        memcpy(&bda, (void*) 0x400, sizeof(bda));
 
         sys_setup_alloc();
 
@@ -216,7 +216,7 @@ int init(unsigned long magic, multiboot_info_t* hdr)
         sys_setup_paging(mmap, (unsigned int) hdr->mmap_length);
         sys_setup_arch();
 
-        printf(WELCOME); // The only screen output that should be maintained
+        printf (WELCOME); // The only screen output that should be maintained
 #ifdef PA_DBG
 //         endProg();
 #endif
@@ -271,6 +271,7 @@ int init(unsigned long magic, multiboot_info_t* hdr)
 #ifdef TIMER_DBG
         timer_setup_test(0, X86_8259_INTERRUPT_BASE);
 #endif
+
         core_loop();
         return 0; // To keep the compiler happy.
 }

@@ -1,22 +1,22 @@
 /*
-    Andromeda
-    Copyright (C)  2011, 2012, 2013, 2014, 2015  Bart Kuivenhoven
-    Copyright (C)  2011  Steven van der Schoot
-    Copyright (C)  2012  Michel Megens
+ Andromeda
+ Copyright (C)  2011, 2012, 2013, 2014, 2015  Bart Kuivenhoven
+ Copyright (C)  2011  Steven van der Schoot
+ Copyright (C)  2012  Michel Megens
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESbuffer_initS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESbuffer_initS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <stdlib.h>
 #include <andromeda/core.h>
@@ -55,8 +55,7 @@ void demand_key();
 void shutdown()
 {
         printf("You can now shutdown your PC\n");
-        for(;;)
-        {
+        for (;;) {
                 endProg();
         }
 }
@@ -169,11 +168,11 @@ void core_loop()
 #ifdef PT_DBG
         addr_t ptb = (addr_t)(&page_table_boot) + 0xC0000000;
         printf( "page table boot: %X\n"
-                "phys: %X\n"
-                "virt: %X\n",
-                &core_loop,
-                x86_pte_get_phys(core_loop),
-                core_loop
+                        "phys: %X\n"
+                        "virt: %X\n",
+                        &core_loop,
+                        x86_pte_get_phys(core_loop),
+                        core_loop
         );
 #endif
 
@@ -188,19 +187,22 @@ void core_loop()
 #ifdef INTERRUPT_TEST
         interrupt_test(80);
 #endif
-        debug ("Entering core loop\n");
+        debug("Entering core loop\n");
+        int ii = 0;
+        for (ii = 0; ii < 0x20; ii++) {
+                printf("Debugging output: %X\n", ii);
+        }
         while (TRUE) // Infinite loop, to make the kernel wait when there is nothing to do
         {
-                switch (rl)
-                {
+                switch (rl) {
                 case RL_RUN0:
                 case RL_RUN1:
                 case RL_RUN2:
                 case RL_RUN3:
                 case RL_RUN4:
-                     halt();
+                        halt();
 #ifdef RR_EXP
-                     rr_sched();
+                        rr_sched();
 #endif
                         break;
 
