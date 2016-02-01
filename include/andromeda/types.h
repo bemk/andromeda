@@ -16,17 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
-
-#define startup __attribute__((section(".startup")))
-
-#endif
+#ifndef __ANDROMEDA_TYPES_H
+#define __ANDROMEDA_TYPES_H
 
 #ifdef __cplusplus
-}
+#define NULL 0
+#else
+#define NULL (void*)0
+#endif
+
 #endif

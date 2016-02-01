@@ -2,8 +2,9 @@
 "name" : "arch-x86-boot",
 "link" : false,
 "archive" : false,
-"source-files" : ["start.c"],
+"source-files" : ["init.c"],
 "compiler-flags" : "",
+"dcompiler-flags" : [{"key" : "timer_dbg", "flags" : "-D TIMER_DBG"}],
 "linker-flags" : "",
 "archiver-flags" : ""
 }

@@ -20,10 +20,11 @@
 extern "C" {
 #endif
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
+#ifndef __ANDROMEDA_CPUAPI_H
+#define __ANDROMEDA_CPUAPI_H
 
-#define startup __attribute__((section(".startup")))
+void halt();
+void shutdown();
 
 #endif
 

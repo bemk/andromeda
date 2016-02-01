@@ -24,8 +24,14 @@ SECTIONS
     .higherhalf : AT (ADDR(.higherhalf) - 0xC0000000)
     {
         higherhalf = .; _higherhalf = .; __higherhalf = .;
-        *(.higherhalf);
+        *(.higherhalf)
         . = ALIGN(0x10000);
+    }
+    .startup : AT (ADDR(.startup) - 0xC0000000)
+    {
+	startup = .; _startup = .; __startup = .;
+	*(.startup)
+	. = ALIGN(0x10000);
     }
     .text : AT (ADDR(.text) - 0xC0000000)
     {

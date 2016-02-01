@@ -1,0 +1,11 @@
+{
+"name" : "arch-x86",
+"link" : false,
+"archive" : false,
+"compiler" : "gcc",
+"source-files" : ["byteorder.c"],
+"compiler-flags" : "-Os",
+"linker-flags" : "",
+"archiver-flags" : "",
+"depend" : [{"path" : "asm.build"}, {"path" : "asm/asm.build"}, {"path" : "boot/boot.build"}, {"path" : "kernel/kernel.build"}, {"path" : "mm/mm.build"}]
+}

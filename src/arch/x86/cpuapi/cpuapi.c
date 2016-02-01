@@ -16,17 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <andromeda/cpuapi.h>
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
+void halt()
+{
+        asm (
+                        "hlt\n\t"
+        );
 
-#define startup __attribute__((section(".startup")))
-
-#endif
-
-#ifdef __cplusplus
 }
-#endif
+
+void shutdown()
+{
+        for (;;) {
+                asm (
+                                "cli\n\t"
+                                "hlt\n\t"
+                );
+        }
+}
+

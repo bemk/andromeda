@@ -1,8 +1,8 @@
 {
-"name" : "arch-x86-boot",
+"name" : "arch-x86-cpuapi",
 "link" : false,
 "archive" : false,
-"source-files" : ["start.c"],
+"source-files" : ["cpuapi.c"],
 "compiler-flags" : "",
 "linker-flags" : "",
 "archiver-flags" : ""

@@ -16,17 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <mboot/mboot.h>
+#include <andromeda/cpuapi.h>
+#include <andromeda/system.h>
+#include <andromeda/types.h>
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
-
-#define startup __attribute__((section(".startup")))
-
-#endif
-
-#ifdef __cplusplus
+startup void early_printk(char* str) {
+        if (str == NULL) {
+                return;
+        }
+        return;
 }
-#endif
+
+void panic()
+{
+        for (;;) {
+
+        }
+}
+
+int init(unsigned long magic)
+{
+
+        if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
+                panic();
+        }
+
+        for (;;) {
+        }
+        return 0;
+}
+

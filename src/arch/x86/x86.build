@@ -3,9 +3,9 @@
 "link" : false,
 "archive" : false,
 "compiler" : "gcc",
-"source-files" : ["byteorder.c"],
+"source-files" : [],
 "compiler-flags" : "-Os",
 "linker-flags" : "",
 "archiver-flags" : "",
-"depend" : [{"path" : "asm.build"}, {"path" : "asm/asm.build"}, {"path" : "boot/boot.build"}, {"path" : "kernel/kernel.build"}, {"path" : "mm/mm.build"}]
+"depend" : [{"path" : "asm.build"}, {"path" : "boot/boot.build"}, {"path" : "cpuapi/cpuapi.build"}]
 }
