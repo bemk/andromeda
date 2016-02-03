@@ -3,7 +3,7 @@
 "link" : false,
 "archive" : false,
 "compiler" : "gcc",
-"source-files" : [],
+"source-files" : ["early_printk.c"],
 "compiler-flags" : "-Os",
 "linker-flags" : "",
 "archiver-flags" : "",

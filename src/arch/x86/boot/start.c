@@ -19,31 +19,80 @@
 #include <mboot/mboot.h>
 #include <andromeda/cpuapi.h>
 #include <andromeda/system.h>
-#include <andromeda/types.h>
+#include <types.h>
+#include <arch/x86/early_printk.h>
 
-startup void early_printk(char* str) {
-        if (str == NULL) {
+int startup_cleanup = 0;
+
+struct sys_log {
+// To be implemented!
+};
+
+struct sys_log std_log;
+struct sys_log err_log;
+
+void log(struct sys_log* log, char* fmt, ...)
+{
+        if (log == NULL || fmt == NULL) {
                 return;
         }
-        return;
 }
 
-void panic()
+#define panic(msg) panic_func(msg, __FILE__, __LINE__)
+
+__attribute__((noreturn))
+void panic_func(char* msg, char* file, int line)
 {
+        if (startup_cleanup) {
+                early_printk("Shit's fucked up way too quickly!\n");
+                early_printk(msg);
+        } else {
+#ifdef CAS
+                // Little easter egg, a request from Cas van Raan
+                log("Shit's fucked up at line %i in file %s\n%s\nTry again!", line, file, msg);
+#else
+                log(&err_log, "Andromeda panic in %s at line %i\n%s\n", file,
+                                line, msg);
+#endif
+                log(&err_log, "Shits fucked up!\n");
+        }
+
         for (;;) {
 
         }
 }
 
-int init(unsigned long magic)
+void core()
 {
+        for (;;) {
+                halt();
+        }
+}
+
+startup int init(unsigned long magic)
+{
+        setup_early_printk();
+
+        char* str = "a";
+
+        int i = 0;
+        int j = 0;
+
+        for (i = 0; i < 20; i++) {
+                for (j = 0; j < 70; j++) {
+                        early_printk(str);
+                }
+                (*str)++;
+                early_printk("blaat");
+                early_printk("\r\n");
+        }
 
         if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-                panic();
+                panic("Incorrect loader magic");
         }
 
-        for (;;) {
-        }
-        return 0;
+        core();
+
+        return 1;
 }
 

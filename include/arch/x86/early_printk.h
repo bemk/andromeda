@@ -16,18 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __ARCH_X86_EARLY_PRINTK_H
+#define __ARCH_X86_EARLY_PRINTK_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
-
-#define startup __attribute__((section(".startup")))
-#define startup_data __attribute__((section(".startup_data")))
-
-#endif
+void setup_early_printk();
+void early_printk(char* str);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

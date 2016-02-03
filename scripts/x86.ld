@@ -29,42 +29,48 @@ SECTIONS
     }
     .startup : AT (ADDR(.startup) - 0xC0000000)
     {
-	startup = .; _startup = .; __startup = .;
-	*(.startup)
-	. = ALIGN(0x10000);
+        startup = .; _startup = .; __startup = .;
+        *(.startup)
+        . = ALIGN(0x10000);
+    }
+    .startup_data : AT (ADDR(.startup_data) - 0xC0000000)
+    {
+        startup_data = .; _startup_data = .; __startup_data = .;
+        *(.startup_data)
+        . = ALIGN(0x10000);
     }
     .text : AT (ADDR(.text) - 0xC0000000)
     {
         code = .; _code = .; __code = .;
         *(.text)
-	*(.gnu_linkonce.t*)
+        *(.gnu_linkonce.t*)
         . = ALIGN(0x10000);
     }
     .rodata : AT (ADDR(.rodata) - 0xC0000000)
     {
-	  rodata = .; _rodata = .; __rodata = .;
-	  _ctor_start = .;
-	  *(.ctor*)
-	  _dtor_start = .;
-	  *(.dtor*)
-	  *(.gnu_linkonce.r*)
-	  *(.rodata*)
-	  . = ALIGN(0x10000);
+          rodata = .; _rodata = .; __rodata = .;
+          _ctor_start = .;
+          *(.ctor*)
+          _dtor_start = .;
+          *(.dtor*)
+          *(.gnu_linkonce.r*)
+          *(.rodata*)
+          . = ALIGN(0x10000);
     }
     .data : AT (ADDR(.data) - 0xC0000000)
     {
         data = .; _data = .; __data = .;
         *(.data)
-	*(.gnu.linkonce.d*)
+        *(.gnu.linkonce.d*)
         . = ALIGN(0x10000);
-	stack = ALIGN(0x10000);
+        stack = ALIGN(0x10000);
     }
     .bss : AT (ADDR(.bss) - 0xC0000000)
     {
         bss = .; _bss = .; __bss = .;
-	*(.gnu.linkonce.b*)
+        *(.gnu.linkonce.b*)
         *(.bss)
-	*(COMMON)
+        *(COMMON)
         . = ALIGN(0x10000);
     }
     end = .; _end = .; __end = .;
