@@ -47,6 +47,7 @@ startup int init(unsigned long magic)
 {
         setup_early_printk();
 
+        /*
         char* str[36] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a",
                           "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
                           "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
@@ -60,6 +61,10 @@ startup int init(unsigned long magic)
                         early_printk(str[i]);
                 }
         }
+        */
+
+        early_printk("a\tb\n");
+        early_printk("1234567890-=\n");
 
         if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
                 panic("Incorrect loader magic");

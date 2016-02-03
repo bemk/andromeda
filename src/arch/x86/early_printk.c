@@ -19,6 +19,7 @@
 #include <andromeda/types.h>
 #include <andromeda/system.h>
 #include <arch/x86/early_printk.h>
+#include <andromeda/cpuapi.h>
 #include <andromeda/panic.h>
 
 /* The config for the early printk */
@@ -66,70 +67,108 @@ static void vga_putchar(unsigned char c, char height, char width)
         /* Format the character to be written */
         unsigned short character = c | vga_data.bg_bytes;
 
+        /* Calculate the cursor position in the array */
         int cursor = height * vga_data.width + width;
 
+        /* If we're out of bounds, do a panic */
         if (cursor > 80 * 25) {
                 vga_data.line_cursor = 0;
                 vga_data.character_cursor = 0;
                 panic("Cursor out of bounds!");
         }
 
+        /* Put the character in place */
         vga_data.framebuffer[cursor] = character;
+}
+
+void vga_set_character(unsigned char height, unsigned char width)
+{
+        /* Turn the cursor into a single location */
+        unsigned short location = height * vga_data.width + width;
+
+        /* Write upper half of the cursor location */
+        outb(0x3D4, 14);
+        outb(0x3D5, location >> 8);
+        /* Write lower half of the cursor location */
+        outb(0x3D4, 15);
+        outb(0x3D5, location);
 }
 
 startup void setup_early_printk()
 {
-        vga_data.framebuffer = (unsigned short*) 0xB8000;
-        vga_data.bg_bytes = 0x0F00;
+        /* Set up the basic arguments */
+        vga_data.framebuffer = (unsigned short*) 0xB8000; /* Colour VGA text */
+        vga_data.bg_bytes = 0x0F00; /* Set to white text, black background */
         vga_data.height = 25;
         vga_data.width = 80;
 
         int i = 0;
         int j = 0;
+        /* Set the entire screen to empty */
         for (; i < vga_data.height; i++) {
                 for (j = 0; j < vga_data.width; j++) {
                         vga_putchar(' ', i, j);
                 }
         }
 
+        /* Set the cursor to the top left of the screen */
         vga_data.line_cursor = 0;
         vga_data.character_cursor = 0;
+
+        vga_set_character(0, 0);
 }
 
 startup void early_printk(char* str)
 {
-        if (str == NULL) {
+        /* Make sure we're not referencing null here*/
+        if (str == NULL || str[0] == '\0') {
                 return;
         }
 
+        /* Loop 'till the end of the string */
         while (*str != '\0') {
 
-                if (vga_data.character_cursor >=vga_data.width) {
+                /* If we overflow the line, do carriage return and line feed */
+                if (vga_data.character_cursor >= vga_data.width) {
                         vga_data.character_cursor = 0;
                         vga_data.line_cursor++;
                 }
+                /* If overflow on the screen, scroll up */
                 if (vga_data.line_cursor >= vga_data.height) {
                         scroll();
                 }
 
+                /* Filter out relevant special characters */
                 switch (*str) {
                 case '\n':
+                        /* Newline also does line feed */
                         vga_data.character_cursor = 0;
                         vga_data.line_cursor++;
                         break;
                 case '\r':
+                        /* Line feed doesn't also do carriage return */
                         vga_data.character_cursor = 0;
                         break;
                 case '\t':
-                        vga_data.character_cursor += 8;
+                        /* Go to the next multiple of 8 */
+                        vga_data.character_cursor += (8
+                                        - (vga_data.character_cursor & 0x7));
+                        vga_data.character_cursor --;
                         break;
+
                 default:
-                        vga_putchar(*str, vga_data.line_cursor, vga_data.character_cursor);
+                        /*
+                         * It seems like this character isn't a special one
+                         * Print it
+                         */
+                        vga_putchar(*str, vga_data.line_cursor,
+                                        vga_data.character_cursor);
                         vga_data.character_cursor++;
                 }
 
                 str++;
         }
+        vga_set_character(vga_data.line_cursor, vga_data.character_cursor);
 
         return;
 }
