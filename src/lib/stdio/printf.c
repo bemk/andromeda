@@ -443,6 +443,6 @@ int vsprintf(char* str, char* fmt, va_list list)
 }
 
 /** @}
- * \file 
+ * \file
  */
 

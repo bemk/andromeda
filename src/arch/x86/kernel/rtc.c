@@ -35,7 +35,7 @@ static void program_rtc(struct device *dev);
 /**
  * \var rtc_dev
  * \brief Global variable for the real time clock.
- * 
+ *
  * At boot, this is the uninitialized rtc. The function <i>setup_rtc()</i> has
  * to be called to initialise the rtc and make sure it is kept up to date.
  */
@@ -44,7 +44,7 @@ struct device *rtc_dev;
 /**
  * \var hz_table[]
  * \brief Rate to hertz converter.
- * 
+ *
  * This array (/table) converts a RTC rate to the associated frequention in
  * Hertz.
  */
@@ -56,7 +56,7 @@ static const unsigned short hz_table[] = { 0, 256, 128, 0x2000, 0x1000, 0x800,
  * \param clock Configured real time clock object.
  * \brief Returns the frequention of a real time clock object.
  * \return Clock frequention in Hertz
- * 
+ *
  * This function returns the configured frequention in Hertz of the given RTC
  * object. If the RTC is not configured correctly or when it is turned of the
  * return value will be 0.
@@ -69,7 +69,7 @@ inline unsigned short get_rtc_frq(rtc_t *clock)
 /**
  * \fn setup_rtcan
  * \brief Setup the RTC.
- * 
+ *
  * This function initialises the Real Time Clock object. It also registers and
  * initialises an IRQ/ISR to keep the RTC object up to date.
  */
@@ -111,7 +111,7 @@ static int rtc_create_driver(struct device *dev)
  * \fn program_rtc(struct device *dev)
  * \param dev The clock device.
  * \brief Config the real time clock.
- * 
+ *
  * program_rtc configures the hardware RTC. It will set the clock to the correct
  * frequency and enable the IRQ. The RTC will be programmed to a periodic
  * clock/interrupt.

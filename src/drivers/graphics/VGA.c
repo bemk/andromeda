@@ -82,37 +82,37 @@ extern boolean pageDbg;
 
 int setVideoMode(int mode)
 {
-	int size = videoModes[mode].width * videoModes[mode].height * videoModes[mode].depth;
-	free(screenbuf);
-	if (size != 0)
-		screenbuf = kmalloc(size);
-	else
-		screenbuf = NULL;
+        int size = videoModes[mode].width * videoModes[mode].height * videoModes[mode].depth;
+        free(screenbuf);
+        if (size != 0)
+                screenbuf = kmalloc(size);
+        else
+                screenbuf = NULL;
 
-	printf("Check 1\n");
+        printf("Check 1\n");
 
-	if(screenbuf==NULL)
-		{screenbuf = 0xA0000;printf("kmalloc(%i) returned NULL!\n",size);return -1;}
-// 	if ( 0 == setModeViaPorts(videoModes[mode].width, videoModes[mode].height, videoModes[mode].chain4?1:0))
-// 		{printf("setModeViaPorts(%i,%i,%i) failed!\n",videoModes[mode].width, videoModes[mode].height, videoModes[mode].chain4?1:0);return -1;}
-	printf("Check 1.1\n");
-	memset(0xA0000,11,16);
-	printf("Check 2\n");
-	printf("Screenbuf: %X\nESP: %X\nValue: %X\n", screenbuf, getESP(), size);
-	printf("Check 2.1\n");
-	int i = 0;
-	for (; i < 0x4FFFFFFF; i++);
-	pageDbg = TRUE;
-	printf("Check 2.2\n");
-	memset(screenbuf,0,size); //hangs
-	printf("Check 3\n");
-	for(;;);
-	memset(0xA0010,11,16);
+        if(screenbuf==NULL)
+                {screenbuf = 0xA0000;printf("kmalloc(%i) returned NULL!\n",size);return -1;}
+//      if ( 0 == setModeViaPorts(videoModes[mode].width, videoModes[mode].height, videoModes[mode].chain4?1:0))
+//              {printf("setModeViaPorts(%i,%i,%i) failed!\n",videoModes[mode].width, videoModes[mode].height, videoModes[mode].chain4?1:0);return -1;}
+        printf("Check 1.1\n");
+        memset(0xA0000,11,16);
+        printf("Check 2\n");
+        printf("Screenbuf: %X\nESP: %X\nValue: %X\n", screenbuf, getESP(), size);
+        printf("Check 2.1\n");
+        int i = 0;
+        for (; i < 0x4FFFFFFF; i++);
+        pageDbg = TRUE;
+        printf("Check 2.2\n");
+        memset(screenbuf,0,size); //hangs
+        printf("Check 3\n");
+        for(;;);
+        memset(0xA0010,11,16);
 
 
-	videoMode = mode;
-	updateScreen();
-	return 0;
+        videoMode = mode;
+        updateScreen();
+        return 0;
 }
 
 //#define outp(port,msg) outb(port,msg)
@@ -293,43 +293,43 @@ int setModeViaPorts(int width, int height,int chain4)
  */
 void updateScreen()
 {
-	if(videoModes[videoMode].chain4)
-		memcpy(
-			screenbuf ,
-			(void*)0xA0000 ,
-			videoModes[videoMode].width * videoModes[videoMode].height * videoModes[videoMode].depth
-		);
-	else
-	{
-		int            size   = videoModes[videoMode].width * videoModes[videoMode].height * videoModes[videoMode].depth / 4;
-		unsigned int   i      = 0                               ,
-		               i2                                       ;
-		unsigned char* plane1 = (unsigned char*)(0xA0000)       ;
-		unsigned char* plane2 = (unsigned char*)(0xA0000+size)  ; //  ]
-		unsigned char* plane3 = (unsigned char*)(0xA0000+2*size); //  ]-> these adress seem to be wrong.
-		unsigned char* plane4 = (unsigned char*)(0xA0000+3*size); //  ]
-		unsigned char* buf    = screenbuf                       ;
+        if(videoModes[videoMode].chain4)
+                memcpy(
+                        screenbuf ,
+                        (void*)0xA0000 ,
+                        videoModes[videoMode].width * videoModes[videoMode].height * videoModes[videoMode].depth
+                );
+        else
+        {
+                int            size   = videoModes[videoMode].width * videoModes[videoMode].height * videoModes[videoMode].depth / 4;
+                unsigned int   i      = 0                               ,
+                               i2                                       ;
+                unsigned char* plane1 = (unsigned char*)(0xA0000)       ;
+                unsigned char* plane2 = (unsigned char*)(0xA0000+size)  ; //  ]
+                unsigned char* plane3 = (unsigned char*)(0xA0000+2*size); //  ]-> these adress seem to be wrong.
+                unsigned char* plane4 = (unsigned char*)(0xA0000+3*size); //  ]
+                unsigned char* buf    = screenbuf                       ;
 
-		for(; i < size; i++)
-		{
-			*plane1 = (unsigned char)0;
-			*plane2 = (unsigned char)0;
-			*plane3 = (unsigned char)0;
-			*plane4 = (unsigned char)0;
-			for(i2=0;i2<4;i2++)
-			{
-				*plane1 |= (unsigned char)( (*buf     ) & 0x03 );
-				*plane2 |= (unsigned char)( (*buf << 2) & 0x03 );
-				*plane3 |= (unsigned char)( (*buf << 4) & 0x03 );
-				*plane4 |= (unsigned char)( (*buf << 6) & 0x03 );
-				buf++;
-			}
-			plane1++;
-			plane2++;
-			plane3++;
-			plane4++;
-		}
-	}
+                for(; i < size; i++)
+                {
+                        *plane1 = (unsigned char)0;
+                        *plane2 = (unsigned char)0;
+                        *plane3 = (unsigned char)0;
+                        *plane4 = (unsigned char)0;
+                        for(i2=0;i2<4;i2++)
+                        {
+                                *plane1 |= (unsigned char)( (*buf     ) & 0x03 );
+                                *plane2 |= (unsigned char)( (*buf << 2) & 0x03 );
+                                *plane3 |= (unsigned char)( (*buf << 4) & 0x03 );
+                                *plane4 |= (unsigned char)( (*buf << 6) & 0x03 );
+                                buf++;
+                        }
+                        plane1++;
+                        plane2++;
+                        plane3++;
+                        plane4++;
+                }
+        }
 }
 
 /**

@@ -21,19 +21,19 @@
 // Claim to have panicked, show the message and enter an infinite loop.
 void panicDebug(char* msg, char* file, int line)
 {
-	stack_dump((uint32_t*)&msg, 8);
+        stack_dump((uint32_t*)&msg, 8);
 #ifdef CAS
-	// Little easter egg, a request from Cas van Raan
-	printf("Shit's fucked up at line %i in file %s\n%s\nTry again!", line, file, msg);
+        // Little easter egg, a request from Cas van Raan
+        printf("Shit's fucked up at line %i in file %s\n%s\nTry again!", line, file, msg);
 #else
-	printf("Andromeda panic in %s at line %i\n%s\n", file, line, msg);
+        printf("Andromeda panic in %s at line %i\n%s\n", file, line, msg);
 #endif
-	endProg(); // Halt and catch fire!
+        endProg(); // Halt and catch fire!
 }
 
 void asm_panic(char* msg)
 {
-	stack_dump((uint32_t*)&msg, 8);
-	printf("Andromeda panic in assembly file!\n%s\n", msg);
-	endProg();
+        stack_dump((uint32_t*)&msg, 8);
+        printf("Andromeda panic in assembly file!\n%s\n", msg);
+        endProg();
 }

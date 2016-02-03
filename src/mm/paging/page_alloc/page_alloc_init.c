@@ -43,15 +43,15 @@ int mboot_parse(multiboot_memory_map_t* map, int map_size)
         /* Pointer to the mboot list entry */
         multiboot_memory_map_t* mmap = map;
 
-	int i = 0;
+        int i = 0;
         /* While not outside of the mboot list */
         while((addr_t)mmap < (addr_t)map + map_size)
         {
-		i++;
+                i++;
 #ifdef PA_DBG
                 printf( "Entry: %i\taddr: %X.%X\tsize: %X\ttype: %X\n",
-			(int)i,
-			(int)(mmap->addr >> 32),
+                        (int)i,
+                        (int)(mmap->addr >> 32),
                         (int)mmap->addr,
                         (int)mmap->len,
                         (int)mmap->type

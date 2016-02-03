@@ -25,19 +25,19 @@
 double
 cabs(double complex x)
 {
-	return sqrt( creal(x)*creal(x) + cimag(x)*cimag(x) );
+        return sqrt( creal(x)*creal(x) + cimag(x)*cimag(x) );
 }
 
 float
 cabsf(float complex);
 {
-	return sqrtf( crealf(x)*crealf(x) + cimagf(x)*cimagf(x) );
+        return sqrtf( crealf(x)*crealf(x) + cimagf(x)*cimagf(x) );
 }
 
 long double
 cabsl(long double complex);
 {
-	return sqrtl( creall(x)*creall(x) + cimagl(x)*cimagl(x) );
+        return sqrtl( creall(x)*creall(x) + cimagl(x)*cimagl(x) );
 }
 
  /**
@@ -46,17 +46,17 @@ cabsl(long double complex);
 
 double complex       ccos(double complex);
 {
-	return ( sin(creal(x))*cosh(cimag(x)) ) + I( cos(creal(x))*sinh(cimag(x)) );
+        return ( sin(creal(x))*cosh(cimag(x)) ) + I( cos(creal(x))*sinh(cimag(x)) );
 }
 
 float complex        ccosf(float complex);
 {
-	return ( sinf(crealf(x))*coshf(cimagf(x)) ) + I( cosf(crealf(x))*sinhf(cimagf(x)) );
+        return ( sinf(crealf(x))*coshf(cimagf(x)) ) + I( cosf(crealf(x))*sinhf(cimagf(x)) );
 }
 
 long double complex  ccosl(long double complex);
 {
-	return ( sinl(creall(x))*coshl(cimagl(x)) ) + I( cosl(creall(x))*sinhl(cimagl(x)) );
+        return ( sinl(creall(x))*coshl(cimagl(x)) ) + I( cosl(creall(x))*sinhl(cimagl(x)) );
 }
 
  /**
@@ -65,17 +65,17 @@ long double complex  ccosl(long double complex);
 
 double complex cacos(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex cacosf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  cacosl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -84,17 +84,17 @@ long double complex  cacosl(long double complex);
 
 double complex       ccosh(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        ccoshf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  ccoshl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -103,17 +103,17 @@ long double complex  ccoshl(long double complex);
 
 double complex       cacosh(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        cacoshf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  cacoshl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -122,17 +122,17 @@ long double complex  cacoshl(long double complex);
 
 double               carg(double complex);
 {
-	return ;
+        return ;
 }
 
 float                cargf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double          cargl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -141,17 +141,17 @@ long double          cargl(long double complex);
 
 double complex       casin(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        casinf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  casinl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -160,17 +160,17 @@ long double complex  casinl(long double complex);
 
 float complex        casinhf(float complex);
 {
-	return ;
+        return ;
 }
 
 double complex       casinh(double complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  casinhl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -179,17 +179,17 @@ long double complex  casinhl(long double complex);
 
 double complex       catan(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        catanf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  catanl(long double complex);
 {
-	return ;
+        return ;
 }
 
  /**
@@ -198,196 +198,196 @@ long double complex  catanl(long double complex);
 
 double complex       catanh(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        catanhf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  catanhl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       cexp(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        cexpf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  cexpl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double               cimag(double complex);
 {
-	return ;
+        return ;
 }
 
 float                cimagf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double          cimagl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       clog(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        clogf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  clogl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       conj(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        conjf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  conjl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       cpow(double complex, double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        cpowf(float complex, float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  cpowl(long double complex, long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       cproj(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        cprojf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  cprojl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double               creal(double complex);
 {
-	return ;
+        return ;
 }
 
 float                crealf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double          creall(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       csin(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        csinf(float complex);
 {
-	return ;
+        return ;
 }
 
 double complex       csinh(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        csinhf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  csinhl(long double complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  csinl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       csqrt(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        csqrtf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  csqrtl(long double complex);
 {
-	return ;
+        return ;
 }
 
 double complex       ctan(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        ctanf(float complex);
 {
-	return ;
+        return ;
 }
 
 double complex       ctanh(double complex);
 {
-	return ;
+        return ;
 }
 
 float complex        ctanhf(float complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  ctanhl(long double complex);
 {
-	return ;
+        return ;
 }
 
 long double complex  ctanl(long double complex);
 {
-	return ;
+        return ;
 }
 

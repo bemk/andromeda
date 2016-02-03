@@ -136,17 +136,17 @@ void setEntry (int num, unsigned int base, unsigned int limit,
   else
   {
     limit = limit >> 8;
-    GDT[num].baseLow	= (base & 0xFFFFFF);
-    GDT[num].baseHigh	= (base >> 24) & 0xFF;
-    GDT[num].limit	= (limit & 0xFFFF);
-    GDT[num].limitHigh	= (limit >> 16) & 0xF;
-    GDT[num].dpl 	= dpl & 0x3;
-    GDT[num].type	= type & 0xF;
-    GDT[num].zero	= 0;
-    GDT[num].one	= 1;
+    GDT[num].baseLow    = (base & 0xFFFFFF);
+    GDT[num].baseHigh   = (base >> 24) & 0xFF;
+    GDT[num].limit      = (limit & 0xFFFF);
+    GDT[num].limitHigh  = (limit >> 16) & 0xF;
+    GDT[num].dpl        = dpl & 0x3;
+    GDT[num].type       = type & 0xF;
+    GDT[num].zero       = 0;
+    GDT[num].one        = 1;
     GDT[num].granularity= 1;
-    GDT[num].s		= 1;
-    GDT[num].mode	= 1;
+    GDT[num].s          = 1;
+    GDT[num].mode       = 1;
   }
 }
 #endif

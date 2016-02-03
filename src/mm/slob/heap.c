@@ -55,13 +55,13 @@
 int
 heap_inset_block(volatile memory_node_t* heap_l, volatile memory_node_t *block)
 {
-	if (heap_l == NULL || block == NULL)
-		return -E_HEAP_GENERIC;
+        if (heap_l == NULL || block == NULL)
+                return -E_HEAP_GENERIC;
 
-	addr_t block_address = (addr_t) block;
+        addr_t block_address = (addr_t) block;
 
-	volatile memory_node_t *carriage = heap_l;
-	volatile memory_node_t *last = NULL;
+        volatile memory_node_t *carriage = heap_l;
+        volatile memory_node_t *last = NULL;
 
         if ((addr_t)heap_l >= block_address)
         {
@@ -78,15 +78,15 @@ heap_inset_block(volatile memory_node_t* heap_l, volatile memory_node_t *block)
                 last = carriage;
                 carriage = carriage->next;
         }
-	if (last == NULL)
-		return -E_HEAP_GENERIC;
+        if (last == NULL)
+                return -E_HEAP_GENERIC;
 
-	block->next = last->next;
-	block->previous = last;
-	last->next = block;
-	if (block->next != NULL)
-		block->next->previous = block;
-	return -E_SUCCESS;
+        block->next = last->next;
+        block->previous = last;
+        last->next = block;
+        if (block->next != NULL)
+                block->next->previous = block;
+        return -E_SUCCESS;
 }
 
 /**
@@ -96,21 +96,21 @@ heap_inset_block(volatile memory_node_t* heap_l, volatile memory_node_t *block)
 void
 heap_add_blocks(void* base, uint32_t size)
 {
-	volatile memory_node_t* node = (memory_node_t*) base;
-	initHdr(node, size - sizeof (memory_node_t));
-	if (heap == NULL)
-	{
-		mutex_lock(&prot);
-		heap = node;
-		mutex_unlock(&prot);
-	}
-	else
-	{
-		mutex_lock(&prot);
-		if (heap_inset_block(heap, node) != -E_SUCCESS)
-			panic("Could not add blocks to map");
-		mutex_unlock(&prot);
-	}
+        volatile memory_node_t* node = (memory_node_t*) base;
+        initHdr(node, size - sizeof (memory_node_t));
+        if (heap == NULL)
+        {
+                mutex_lock(&prot);
+                heap = node;
+                mutex_unlock(&prot);
+        }
+        else
+        {
+                mutex_lock(&prot);
+                if (heap_inset_block(heap, node) != -E_SUCCESS)
+                        panic("Could not add blocks to map");
+                mutex_unlock(&prot);
+        }
 }
 
 int slob_sys_register()

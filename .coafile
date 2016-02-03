@@ -1,0 +1,6 @@
+[Default]
+bears = SpaceConsistencyBear
+files = **/*.c
+use_spaces = true
+default_actions = SpaceConsistencyBear: ApplyPatchAction
+tab_width = 8
