@@ -21,21 +21,29 @@
 #include <arch/x86/early_printk.h>
 #include <andromeda/log.h>
 
+/* This function will never return */
 __attribute__((noreturn))
 void panic_func(char* msg, char* file, int line)
 {
+        /* If we haven't set up the logger system, use early printk */
         if (startup_cleanup) {
-                early_printk("Shit's fucked up way too quickly!\n");
+#ifdef CAS
+                early_printk("Shit's fucked up! Try again!\nfile: ");
+#else
+                early_printk("Andromeda panic!\nfile: ");
+#endif
+                early_printk(file);
+                early_printk("\n");
                 early_printk(msg);
         } else {
 #ifdef CAS
                 // Little easter egg, a request from Cas van Raan
-                log("Shit's fucked up at line %i in file %s\n%s\nTry again!", line, file, msg);
+                log(&err_log, "Shit's fucked up at line %i in file %s\n%s\n"
+                                "Try again!", line, file, msg);
 #else
                 log(&err_log, "Andromeda panic in %s at line %i\n%s\n", file,
                                 line, msg);
 #endif
-                log(&err_log, "Shits fucked up!\n");
         }
 
         for (;;) {

@@ -43,32 +43,19 @@ void core()
         }
 }
 
-startup int init(unsigned long magic)
+startup int init(unsigned long magic, multiboot_info_t* mem_map)
 {
         setup_early_printk();
 
-        /*
-        char* str[36] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a",
-                          "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-                          "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
-                          "x", "y", "z" };
-
-        int i = 0;
-        int j = 0;
-
-        for (i = 0; i < 36; i++) {
-                for (j = 0; j < 80; j++) {
-                        early_printk(str[i]);
-                }
-        }
-        */
-
-        early_printk("a\tb\n");
-        early_printk("1234567890-=\n");
+        early_printk("Loading Andromeda...");
 
         if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
                 panic("Incorrect loader magic");
         }
+        if (mem_map == NULL) {
+                panic("Invalid memory map!");
+        }
+
 
         core();
 

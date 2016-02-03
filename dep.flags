@@ -37,6 +37,11 @@
                 "mandatory": false
         },
         "build_root": "andromeda.build",
+        "cas": {
+                "ignore-autoconf": true,
+		"info" : "Easter egg adding kernel panic profanity",
+                "mandatory": false
+        },
         "dbg_statements": {
                 "ignore-autoconf": false,
                 "info": "",
