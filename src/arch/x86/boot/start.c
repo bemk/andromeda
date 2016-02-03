@@ -16,17 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <mboot/mboot.h>
+#include <arch/x86/early_printk.h>
 #include <andromeda/cpuapi.h>
 #include <andromeda/system.h>
+#include <andromeda/log.h>
+#include <andromeda/panic.h>
+#include <mboot/mboot.h>
 #include <types.h>
-#include <arch/x86/early_printk.h>
 
-int startup_cleanup = 0;
-
-struct sys_log {
-// To be implemented!
-};
+int startup_cleanup = 1;
 
 struct sys_log std_log;
 struct sys_log err_log;
@@ -35,30 +33,6 @@ void log(struct sys_log* log, char* fmt, ...)
 {
         if (log == NULL || fmt == NULL) {
                 return;
-        }
-}
-
-#define panic(msg) panic_func(msg, __FILE__, __LINE__)
-
-__attribute__((noreturn))
-void panic_func(char* msg, char* file, int line)
-{
-        if (startup_cleanup) {
-                early_printk("Shit's fucked up way too quickly!\n");
-                early_printk(msg);
-        } else {
-#ifdef CAS
-                // Little easter egg, a request from Cas van Raan
-                log("Shit's fucked up at line %i in file %s\n%s\nTry again!", line, file, msg);
-#else
-                log(&err_log, "Andromeda panic in %s at line %i\n%s\n", file,
-                                line, msg);
-#endif
-                log(&err_log, "Shits fucked up!\n");
-        }
-
-        for (;;) {
-
         }
 }
 
@@ -73,18 +47,18 @@ startup int init(unsigned long magic)
 {
         setup_early_printk();
 
-        char* str = "a";
+        char* str[36] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a",
+                          "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+                          "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w",
+                          "x", "y", "z" };
 
         int i = 0;
         int j = 0;
 
-        for (i = 0; i < 20; i++) {
-                for (j = 0; j < 70; j++) {
-                        early_printk(str);
+        for (i = 0; i < 36; i++) {
+                for (j = 0; j < 80; j++) {
+                        early_printk(str[i]);
                 }
-                (*str)++;
-                early_printk("blaat");
-                early_printk("\r\n");
         }
 
         if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {

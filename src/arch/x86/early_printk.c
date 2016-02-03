@@ -19,9 +19,10 @@
 #include <andromeda/types.h>
 #include <andromeda/system.h>
 #include <arch/x86/early_printk.h>
+#include <andromeda/panic.h>
 
 /* The config for the early printk */
-struct early_printk_config {
+struct vga_config {
         unsigned short* framebuffer;
         unsigned short line_cursor;
         unsigned short character_cursor;
@@ -29,64 +30,70 @@ struct early_printk_config {
         unsigned char width;
         unsigned char height;
 };
-startup_data struct early_printk_config early_printk_data;
+struct vga_config vga_data;
 
 startup static void scroll()
 {
-        unsigned char width = early_printk_data.width;
-        unsigned short limit = width * (early_printk_data.height - 1);
+        /* Cache the screen width */
+        unsigned short width = vga_data.width;
+        /* Set the limit to 24 lines */
+        unsigned short limit = width * (vga_data.height - 1);
 
         unsigned short idx = 0;
 
+        /* Cycle though all the characters in the 24 top most lines
+         */
         for (; idx < limit; idx++) {
-                unsigned short fetch =
-                                early_printk_data.framebuffer[idx + width];
-                early_printk_data.framebuffer[idx] = fetch;
+                unsigned short cache;
+                /* Cache the character 80 characters (or 1 line) ahead */
+                cache = vga_data.framebuffer[idx + width];
+                /* put the character in place */
+                vga_data.framebuffer[idx] = cache;
         }
 
-        limit = idx + width;
+        /* Move the limit one line over */
+        limit += width;
         for (; idx < width; idx++) {
-                early_printk_data.framebuffer[idx] = ' '
-                                | early_printk_data.bg_bytes;
+                vga_data.framebuffer[idx] = ' ' | vga_data.bg_bytes;
         }
+        /* Make sure nobody writes out of the buffer */
+        vga_data.line_cursor--;
 }
 
 /* Put the actual character on screen */
-startup static void early_putchar(unsigned char c)
+static void vga_putchar(unsigned char c, char height, char width)
 {
-        unsigned short character = c | early_printk_data.bg_bytes;
+        /* Format the character to be written */
+        unsigned short character = c | vga_data.bg_bytes;
 
-        unsigned short cursor = early_printk_data.line_cursor;
-        cursor *= early_printk_data.width;
-        cursor += early_printk_data.character_cursor;
+        int cursor = height * vga_data.width + width;
 
-        early_printk_data.character_cursor++;
-        if (early_printk_data.character_cursor >= early_printk_data.width) {
-                early_printk_data.line_cursor++;
-                early_printk_data.character_cursor = 0;
-                if (early_printk_data.line_cursor > early_printk_data.height) {
-                        scroll();
-                }
+        if (cursor > 80 * 25) {
+                vga_data.line_cursor = 0;
+                vga_data.character_cursor = 0;
+                panic("Cursor out of bounds!");
         }
 
-        early_printk_data.framebuffer[cursor] = character;
+        vga_data.framebuffer[cursor] = character;
 }
 
 startup void setup_early_printk()
 {
-        early_printk_data.framebuffer = (unsigned short*) 0xB8000;
-        early_printk_data.bg_bytes = 0x0F00;
-        early_printk_data.height = 25;
-        early_printk_data.width = 80;
+        vga_data.framebuffer = (unsigned short*) 0xB8000;
+        vga_data.bg_bytes = 0x0F00;
+        vga_data.height = 25;
+        vga_data.width = 80;
 
-        int lim = early_printk_data.height * early_printk_data.width;
         int i = 0;
-        for (; i < lim; i++) {
-                early_putchar(' ');
+        int j = 0;
+        for (; i < vga_data.height; i++) {
+                for (j = 0; j < vga_data.width; j++) {
+                        vga_putchar(' ', i, j);
+                }
         }
 
-        early_printk_data.line_cursor = 0;
-        early_printk_data.character_cursor = 0;
+        vga_data.line_cursor = 0;
+        vga_data.character_cursor = 0;
 }
 
 startup void early_printk(char* str)
@@ -96,18 +103,29 @@ startup void early_printk(char* str)
         }
 
         while (*str != '\0') {
+
+                if (vga_data.character_cursor >=vga_data.width) {
+                        vga_data.character_cursor = 0;
+                        vga_data.line_cursor++;
+                }
+                if (vga_data.line_cursor >= vga_data.height) {
+                        scroll();
+                }
+
                 switch (*str) {
                 case '\n':
-                        early_printk_data.line_cursor++;
+                        vga_data.character_cursor = 0;
+                        vga_data.line_cursor++;
                         break;
                 case '\r':
-                        early_printk_data.character_cursor = 0;
+                        vga_data.character_cursor = 0;
                         break;
                 case '\t':
-                        early_printk_data.character_cursor += 8;
+                        vga_data.character_cursor += 8;
                         break;
                 default:
-                        early_putchar(*str);
+                        vga_putchar(*str, vga_data.line_cursor, vga_data.character_cursor);
+                        vga_data.character_cursor++;
                 }
 
                 str++;

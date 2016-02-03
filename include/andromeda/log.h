@@ -16,20 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __ANDROMEDA_LOG_H
+#define __ANDROMEDA_LOG_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
+struct sys_log {
+// To be implemented!
+};
+void log(struct sys_log* log, char* fmt, ...);
 
-#define startup __attribute__((section(".startup")))
-#define startup_data __attribute__((section(".startup_data")))
-
-extern int startup_cleanup ;
-
-#endif
+extern struct sys_log std_log;
+extern struct sys_log err_log;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

@@ -16,20 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __ANDROMEDA_PANIC_H
+#define __ANDROMEDA_PANIC_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __ANDROMEDA_SYSTEM_H
-#define __ANDROMEDA_SYSTEM_H
+#define panic(msg) panic_func(msg, __FILE__, __LINE__)
 
-#define startup __attribute__((section(".startup")))
-#define startup_data __attribute__((section(".startup_data")))
-
-extern int startup_cleanup ;
-
-#endif
+__attribute__((noreturn))
+void panic_func(char* msg, char* file, int line);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

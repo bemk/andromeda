@@ -22,6 +22,7 @@
 "linker-flags" : "-oformat=elf32-i386 -melf_i386 -Tscripts/x86.ld",
 "archiver-flags" : "rs",
 "depend" : [
-	{"path" : "src/arch/arch.build"}
+	{"path" : "src/arch/arch.build"},
+	{"path" : "src/andromeda/andromeda.build"}
 	]
 }
