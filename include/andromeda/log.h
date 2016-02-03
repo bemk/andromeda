@@ -23,6 +23,16 @@
 extern "C" {
 #endif
 
+#include <andromeda/types.h>
+
+struct sys_log_message {
+        time_t timestamp;
+        struct sys_log_message* continued;
+        struct sys_log_message* next;
+        size_t message_length;
+        char message[228];
+};
+
 struct sys_log {
 // To be implemented!
 };

@@ -22,7 +22,7 @@
 #include <andromeda/log.h>
 #include <andromeda/panic.h>
 #include <mboot/mboot.h>
-#include <types.h>
+#include <andromeda/types.h>
 
 int startup_cleanup = 1;
 

@@ -17,6 +17,7 @@
  */
 
 #include <andromeda/cpuapi.h>
+#include <andromeda/types.h>
 
 void halt()
 {
@@ -36,7 +37,7 @@ void shutdown()
         }
 }
 
-void outb(unsigned short port, unsigned char data)
+void out_byte(uint16_t port, uint8_t data)
 {
         __asm__ __volatile__("outb %%al, %%dx"
                         : /* no output */
@@ -45,7 +46,7 @@ void outb(unsigned short port, unsigned char data)
         );
 }
 
-void outw(unsigned short port, unsigned short data)
+void out_doublebyte(uint16_t port, uint16_t data)
 {
         __asm__ __volatile__("outw %%ax, %%dx"
                         : /* no output */
@@ -54,7 +55,7 @@ void outw(unsigned short port, unsigned short data)
         );
 }
 
-void outl(unsigned short port, unsigned int data)
+void out_quadbyte(uint16_t port, uint32_t data)
 {
         __asm__ __volatile__("outl %%eax, %%dx"
                         : /* no output */
@@ -63,9 +64,9 @@ void outl(unsigned short port, unsigned int data)
         );
 }
 
-unsigned char inb(unsigned short port)
+uint8_t in_byte(uint16_t port)
 {
-        register unsigned char ret;
+        register uint8_t ret;
         __asm__ __volatile__("inb %%dx, %%al"
                         : "=a" (ret)
                         : "d" (port)
@@ -73,9 +74,9 @@ unsigned char inb(unsigned short port)
         return ret;
 }
 
-unsigned short inw(unsigned short port)
+uint16_t in_doublebyte(uint16_t port)
 {
-        register unsigned short ret;
+        register uint16_t ret;
         __asm__ __volatile__("inw %%dx, %%ax"
                         : "=a" (ret)
                         : "d" (port)
@@ -83,9 +84,9 @@ unsigned short inw(unsigned short port)
         return ret;
 }
 
-unsigned int inl(unsigned short port)
+uint32_t in_quadbyte(uint16_t port)
 {
-        register unsigned int ret;
+        register uint32_t ret;
         __asm__ __volatile__("inl %%dx, %%eax"
                         : "=a" (ret)
                         : "d" (port)

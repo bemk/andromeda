@@ -87,11 +87,11 @@ void vga_set_character(unsigned char height, unsigned char width)
         unsigned short location = height * vga_data.width + width;
 
         /* Write upper half of the cursor location */
-        outb(0x3D4, 14);
-        outb(0x3D5, location >> 8);
+        out_byte(0x3D4, 14);
+        out_byte(0x3D5, location >> 8);
         /* Write lower half of the cursor location */
-        outb(0x3D4, 15);
-        outb(0x3D5, location);
+        out_byte(0x3D4, 15);
+        out_byte(0x3D5, location);
 }
 
 startup void setup_early_printk()
