@@ -1,0 +1,6 @@
+{
+"name" : "slab",
+"link" : false,
+"archive" : false,
+"source-files" : ["slab_alloc.c", "slab_init.c"]
+}

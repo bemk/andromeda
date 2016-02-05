@@ -16,40 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __ANDROMEDA_LOG_H
-#define __ANDROMEDA_LOG_H
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <andromeda/types.h>
-
-struct sys_log_message {
-        time_t timestamp;
-        struct sys_log_message* continued;
-        struct sys_log_message* next;
-        size_t message_length;
-        char message[228];
-};
-
-struct sys_log {
-// To be implemented!
-};
-void log(struct sys_log* log, char* fmt, ...);
-
-extern struct sys_log std_log;
-extern struct sys_log err_log;
-extern struct sys_log warning_log;
-extern struct sys_log debug_log;
-
-#define stdout &std_log
-#define stderr &err_log
-#define stdwarn &warning_log
-#define stddebug &debug_log
+#define PAGE_ALLOC_FACTOR (1 << 12)
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

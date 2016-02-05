@@ -2,7 +2,7 @@
 "name" : "andromeda",
 "link" : false,
 "archive" : false,
-"source-files" : ["panic.c"],
+"source-files" : ["panic.c", "atomic.c"],
 "compiler-flags" : "",
 "linker-flags" : "",
 "archiver-flags" : "",

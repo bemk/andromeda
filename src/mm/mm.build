@@ -1,0 +1,10 @@
+{
+"name" : "mm",
+"link" : false,
+"archive" : false,
+"source-files" : ["memory.c"],
+"compiler-flags" : "",
+"linker-flags" : "",
+"archiver-flags" : "",
+"ddepend" : [{"key" : "slab", "path" : "slab/slab.build"}]
+}

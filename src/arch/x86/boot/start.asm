@@ -1,5 +1,5 @@
 ;   Orion OS, The educational operatingsystem
-;   Copyright (C) 2011  Bart Kuivenhoven
+;   Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016  Bart Kuivenhoven
 
 ;   This program is free software: you can redistribute it and/or modify
 ;   it under the terms of the GNU General Public License as published by
@@ -15,8 +15,9 @@
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;
-;	The multiboot header file, calls the C-level entry point
+;       The multiboot header file, calls the C-level entry point
 ;
+
 [SECTION .boot]
 MBOOT_PAGE_ALIGN    equ 1<<0    ; Load kernel and modules on a page boundary
 MBOOT_MEM_INFO      equ 1<<1    ; Provide your kernel with memory info

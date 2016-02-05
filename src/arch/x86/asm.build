@@ -2,7 +2,7 @@
 "name" : "arch-x86-asm",
 "link" : false,
 "archive" : false,
-"source-files" : ["boot/start.asm"],
+"source-files" : ["boot/start.asm", "cpuapi/cpuapi.asm"],
 "compiler" : "nasm",
 "compiler-override-flags" : "-iinclude/ -felf32 -D X86",
 "linker-flags" : "",

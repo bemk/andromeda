@@ -17,12 +17,16 @@
  */
 
 #include <andromeda/cpuapi.h>
+#include <andromeda/atomic.h>
 #include <andromeda/types.h>
 
 void halt()
 {
         asm (
+                        "pushf\n\t"
+                        "sti\n\t"
                         "hlt\n\t"
+                        "popf\n\t"
         );
 
 }
@@ -97,9 +101,31 @@ uint32_t in_quadbyte(uint16_t port)
 void iowait(void)
 {
         __asm__ __volatile__("xorl %%eax, %%eax\n\t"
-                        "outb %%al, $0x80"
+                        "outb %%al, $0x80\n\t"
                         : /* no output */
                         : /* no input */
                         : "%eax");
 }
 
+void cpu_enable_interrupts()
+{
+        __asm__ __volatile__("sti\n\t");
+}
+
+#define X86_INTERRUPT_BIT (1 << 9)
+int cpu_disable_interrupts()
+{
+        unsigned int flags = 0;
+        __asm__ __volatile__(
+                        "pushf\n\t"
+                        "sti\n\t"
+                        "popl %[flags]"
+                        : [flags] "=r" (flags)
+                        :
+                        :
+        );
+        if (flags & X86_INTERRUPT_BIT) {
+                return 1;
+        }
+        return 0;
+}

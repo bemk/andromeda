@@ -23,11 +23,15 @@
 #include <andromeda/panic.h>
 #include <mboot/mboot.h>
 #include <andromeda/types.h>
+#include <mm/cache.h>
 
 int startup_cleanup = 1;
 
 struct sys_log std_log;
 struct sys_log err_log;
+struct sys_log warning_log;
+struct sys_log debug_log;
+
 
 void log(struct sys_log* log, char* fmt, ...)
 {
@@ -39,7 +43,8 @@ void log(struct sys_log* log, char* fmt, ...)
 void core()
 {
         for (;;) {
-                halt();
+                iowait();
+                //halt();
         }
 }
 
@@ -56,8 +61,13 @@ startup int init(unsigned long magic, multiboot_info_t* mem_map)
                 panic("Invalid memory map!");
         }
 
+#ifdef SLAB
+        slab_alloc_init();
+#endif
 
         core();
+
+        for (;;);
 
         return 1;
 }

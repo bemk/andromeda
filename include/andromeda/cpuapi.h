@@ -16,12 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef __ANDROMEDA_CPUAPI_H
-#define __ANDROMEDA_CPUAPI_H
+#include <andromeda/atomic.h>
+
+#ifdef X86
+#include <arch/x86/x86.h>
+#endif
+
+typedef volatile unsigned int spinlock_t;
 
 void halt();
 void shutdown();
@@ -33,8 +40,12 @@ unsigned short in_doublebyte(unsigned short port);
 unsigned int in_quadbyte(unsigned short port);
 void iowait(void);
 
+void cpu_enable_interrupts();
+int cpu_disable_interrupts();
 
-#endif
+extern int mutex_lock(spinlock_t* );
+extern int mutex_unlock(spinlock_t* );
+extern int mutex_test(spinlock_t* );
 
 #ifdef __cplusplus
 }

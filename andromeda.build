@@ -17,12 +17,15 @@
 	{"key" : "gdb", "flags" : "-ggdb -g"},
 	{"key" : "asm_output (breaks build)", "flags" : "-S" },
 	{"key" : "dbg_statements", "flags" : "-D MSG_DBG"},
-	{"key" : "warn_statements" , "flags" : "-D WARN"}
+	{"key" : "warn_statements" , "flags" : "-D WARN"},
+	{"key" : "slab", "flags" : "-D SLAB"}
 	],
 "linker-flags" : "-oformat=elf32-i386 -melf_i386 -Tscripts/x86.ld",
 "archiver-flags" : "rs",
 "depend" : [
 	{"path" : "src/arch/arch.build"},
-	{"path" : "src/andromeda/andromeda.build"}
+	{"path" : "src/andromeda/andromeda.build"},
+	{"path" : "src/mm/mm.build"},
+	{"path" : "src/stdio/stdio.build"}
 	]
 }
